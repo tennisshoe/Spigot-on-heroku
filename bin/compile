@@ -91,12 +91,26 @@ unzip ngrok.zip -d $BUILD_DIR/bin > /dev/null 2>&1
 
 echo "done"
 
-minecraft_version=${MINECRAFT_VERSION:-"Paper-1.16"}
-minecraft_url=${PAPER:-"https://papermc.io/ci/job/$MINECRAFT_VERSION/lastSuccessfulBuild/artifact/paperclip.jar"}
+# get the latest version of the server
+minecraft_url="https://papermc.io/api/v2/projects/paper"
+version=$(curl -X 'GET' $minecraft_url -H 'accept: application/json' | jq '.versions' | jq '.[-1]' | tr -d '"')
+version=${version:-$MINECRAFT_VERSION}
+version=${version:-"1.16"}
 
-echo "------> Installing PaperClipMC from $minecraft_url"
-curl -o papermc.jar -s -L $minecraft_url
-mv papermc.jar $BUILD_DIR/papermc.jar
+# get the latest build of that version
+minecraft_url+="/versions/$version"
+build=$(curl -X 'GET' $minecraft_url -H 'accept: application/json' | jq '.builds' | jq '.[-1]')
+
+# get the filename of that build
+minecraft_url+="/builds/$build"
+filename=$(curl -X 'GET' $minecraft_url -H 'accept: application/json' | jq '.downloads.application.name' | tr -d '"')
+
+echo "------> Downloading PaperClipMC from $minecraft_url"
+
+# finally download the file
+minecraft_url+="/downloads/$filename"
+curl -O -X 'GET' $minecraft_url  
+mv $filename $BUILD_DIR/papermc.jar
 
 echo "done"
 
