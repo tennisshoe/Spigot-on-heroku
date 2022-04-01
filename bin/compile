@@ -98,17 +98,17 @@ version=${version:-$MINECRAFT_VERSION}
 version=${version:-"1.16"}
 
 # get the latest build of that version
-minecraft_url+="/versions/$version"
+minecraft_url="$minecraft_url/versions/$version"
 build=$(curl -X 'GET' $minecraft_url -H 'accept: application/json' | jq '.builds' | jq '.[-1]')
 
 # get the filename of that build
-minecraft_url+="/builds/$build"
+minecraft_url="$minecraft_url/builds/$build"
 filename=$(curl -X 'GET' $minecraft_url -H 'accept: application/json' | jq '.downloads.application.name' | tr -d '"')
 
 echo "------> Downloading PaperClipMC from $minecraft_url"
 
 # finally download the file
-minecraft_url+="/downloads/$filename"
+minecraft_url="$minecraft_url/downloads/$filename"
 curl -O -X 'GET' $minecraft_url  
 mv $filename $BUILD_DIR/papermc.jar
 
