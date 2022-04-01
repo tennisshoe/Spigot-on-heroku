@@ -63,10 +63,10 @@ echo "server-ip=127.0.0.1" >> /app/server.properties # add public ip to server
 # disable online mode for cracked players
 echo "online-mode=false" >> /app/server.properties
 echo "enable-command-block=true" >> /app/server.properties
-touch whitelist.json
-touch banned-players.json
-touch banned-ips.json
-touch ops.json
+echo "{ }" >> whitelist.json
+echo "{ }" >> banned-players.json
+echo "{ }" >> banned-ips.json
+echo "{ }" >> ops.json
 
 echo "-----> Scaling dyno..."
 limit=$(ulimit -u)
